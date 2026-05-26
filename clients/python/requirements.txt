@@ -1,0 +1,17 @@
+# torrent-mq Python SDK — Core Dependencies
+#
+# Core (required):
+crc32c>=2.4               # Hardware-accelerated CRC32C via SSE4.2
+
+# Compression Backends (optional, install as needed):
+# python-snappy>=0.6      # Snappy compression for record batches
+# lz4>=4.0                # LZ4 compression for record batches
+# zstandard>=0.22         # Zstandard compression for record batches
+
+# Development (install separately via: pip install -e ".[dev]"):
+# pytest>=7.0             # Test runner
+# pytest-cov>=4.0         # Coverage reporting
+# black>=23.0             # Code formatter
+# isort>=5.12             # Import sorter
+# mypy>=1.0               # Static type checker
+# flake8>=6.0             # Linter

@@ -1,0 +1,265 @@
+# torrent-mq Configuration Example
+# Copy to /etc/torrent/config.yaml or pass via --config-file
+
+# ============================================================================
+# Cluster Identity
+# ============================================================================
+cluster:
+  id: torrent-cluster
+
+broker:
+  # Unique broker ID (0-based, must be unique within cluster)
+  id: 0
+  # Rack identifier for rack-aware replica placement
+  rack: rack-1
+
+# ============================================================================
+# Network Listeners
+# ============================================================================
+listeners:
+  plain:
+    host: 0.0.0.0
+    port: 9092
+
+  tls:
+    host: 0.0.0.0
+    port: 9093
+
+  # Advertised addresses (for clients behind NAT/load balancers)
+  # If omitted, uses listener addresses
+  #advertised:
+  #  plain: broker1.example.com:9092
+  #  tls: broker1.example.com:9093
+
+# ============================================================================
+# Admin & Metrics
+# ============================================================================
+admin:
+  enabled: true
+  port: 9644
+
+metrics:
+  enabled: true
+  port: 9090
+
+# ============================================================================
+# Storage Configuration
+# ============================================================================
+storage:
+  log:
+    dir: /var/lib/torrent/data
+    # Maximum segment size before rollover (default: 1GB)
+    segment:
+      bytes: 1073741824
+      # Maximum segment age before rollover (default: 7 days)
+      max_age_ms: 604800000
+      # Sparse index entry interval (bytes between index entries)
+      index_interval_bytes: 4096
+
+  # Retention policies
+  retention:
+    # Maximum message age (default: 7 days, -1 = unlimited)
+    ms: 604800000
+    # Maximum partition size (default: -1 = unlimited)
+    bytes: -1
+
+  # Compaction
+  compaction:
+    # Minimum segment age before compaction eligibility
+    min_compaction_lag_ms: 0
+    # Maximum segment age (segments older MUST be compacted)
+    max_compaction_lag_ms: 9223372036854775807
+    # Minimum ratio of duplicate keys to trigger compaction
+    min_cleanable_dirty_ratio: 0.5
+
+  # Tiered storage (S3 archival)
+  tiered_storage:
+    enabled: false
+    s3:
+      bucket: torrent-archive
+      region: us-east-1
+      access_key: ""
+      secret_key: ""
+      endpoint: ""  # For S3-compatible storage (MinIO, etc.)
+    # Archive segments older than this
+    archive_after_ms: 86400000  # 1 day
+    # Expire archived segments after this
+    expire_after_ms: 2592000000  # 30 days
+    # Maximum number of hot (local) segments per partition
+    max_hot_segments: 10
+    min_hot_segments: 5
+
+  # Encryption at rest
+  encryption:
+    enabled: false
+    key_file: /etc/torrent/encryption.key
+    algorithm: AES-256-GCM
+
+# ============================================================================
+# Network Tuning
+# ============================================================================
+network:
+  # Number of I/O threads for network operations
+  num_io_threads: 4
+  # Number of worker threads for request processing
+  num_worker_threads: 8
+  # Maximum concurrent connections
+  max_connections: 65536
+  # Maximum request size (default: 100MB)
+  max_request_size: 104857600
+
+  socket:
+    # TCP send buffer size
+    send_buffer:
+      bytes: 1048576
+    # TCP receive buffer size
+    recv_buffer:
+      bytes: 1048576
+    # TCP_NODELAY (disable Nagle's algorithm)
+    nodelay: true
+    # SO_REUSEADDR
+    reuse_address: true
+    # TCP keepalive
+    keepalive:
+      enabled: true
+      idle_seconds: 7200
+      interval_seconds: 75
+      count: 9
+
+# ============================================================================
+# Topic Defaults
+# ============================================================================
+topic:
+  # Default replication factor for new topics
+  default:
+    replication_factor: 3
+    partitions: 1
+
+  # Auto-create topics on produce (Kafka compatibility)
+  auto_create: true
+
+  # Default compression type
+  compression:
+    type: none  # none, gzip, snappy, lz4, zstd
+
+  # Maximum message size (default: 1MB)
+  max:
+    message:
+      bytes: 1048588
+
+# ============================================================================
+# Consumer Defaults
+# ============================================================================
+consumer:
+  fetch:
+    max_bytes: 57671680     # 55MB
+    min_bytes: 1
+    max_wait_ms: 500
+  session:
+    timeout_ms: 45000
+  heartbeat:
+    interval_ms: 3000
+
+# ============================================================================
+# Raft Consensus
+# ============================================================================
+raft:
+  heartbeat_interval_ms: 150
+  election_timeout_min_ms: 150
+  election_timeout_max_ms: 300
+
+  # Snapshot creation thresholds
+  snapshot:
+    threshold_entries: 10000
+    threshold_bytes: 67108864  # 64MB
+
+  # Enable pre-vote to reduce disruption
+  pre_vote: true
+
+  # Enable leader leases for consistent reads
+  leader_lease: true
+
+# ============================================================================
+# Security
+# ============================================================================
+security:
+  sasl:
+    enabled: false
+    mechanisms:
+      - SCRAM-SHA-256
+      - SCRAM-SHA-512
+      - PLAIN
+    # SCRAM iteration count
+    scram_iterations: 15000
+
+  tls:
+    enabled: false
+    certificate_path: /etc/torrent/certs/server.crt
+    key_path: /etc/torrent/certs/server.key
+    ca_path: /etc/torrent/certs/ca.crt
+    require_client_auth: false
+    # Minimum TLS version: 1.2, 1.3
+    min_version: "1.2"
+    # Cipher suites (OpenSSL format)
+    ciphers: "ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305"
+
+  # ACL file path (if not using dynamic ACL management)
+  acl_file: /etc/torrent/acl.yaml
+
+# ============================================================================
+# Transactions
+# ============================================================================
+transaction:
+  enabled: true
+  # Transaction timeout (default: 60s)
+  timeout:
+    ms: 60000
+  # Transactional ID expiration (default: 7 days)
+  id:
+    expiration:
+      ms: 604800000
+
+# ============================================================================
+# Schema Registry
+# ============================================================================
+schema:
+  registry:
+    enabled: false
+    port: 8081
+    # Compatibility mode: NONE, BACKWARD, FORWARD, FULL
+    compatibility: BACKWARD
+
+# ============================================================================
+# Proxies
+# ============================================================================
+proxy:
+  rest:
+    enabled: false
+    port: 8082
+  websocket:
+    enabled: false
+    port: 8083
+  mqtt:
+    enabled: false
+    port: 1883
+
+# ============================================================================
+# Quotas
+# ============================================================================
+quota:
+  default:
+    produce:
+      bps: -1      # -1 = unlimited
+    fetch:
+      bps: -1
+    request:
+      rate: -1     # requests per second
+
+# ============================================================================
+# Cluster Seed Servers
+# ============================================================================
+cluster:
+  seed_servers:
+    - broker0:9092
+    - broker1:9092
+    - broker2:9092

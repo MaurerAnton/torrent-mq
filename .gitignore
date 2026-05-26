@@ -1,0 +1,35 @@
+# Build artifacts
+build/
+cmake-build-*/
+*.o
+*.so
+*.a
+*.exe
+*.dll
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Dependencies (fetched at build time)
+build/_deps/
+
+# Compiled binaries
+torrentd
+torrentctl
+torrent_tests
+torrent_benchmark
+
+# Test artifacts
+/tmp/torrent_*
+
+# Core dumps
+core
+*.core
