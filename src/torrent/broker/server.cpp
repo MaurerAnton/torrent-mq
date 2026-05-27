@@ -58,6 +58,7 @@
 #include "torrent/broker/leader_balancer.h"
 #include "torrent/broker/quota_manager.h"
 #include "torrent/broker/dlm.h"
+#include "torrent/consensus/raft.h"
 #include "torrent/network/acceptor.h"
 #include "torrent/network/transport.h"
 #include "torrent/storage/log_manager.h"
@@ -683,14 +684,14 @@ void BrokerServer::start() {
 
         // Build RaftConfig from BrokerConfig.
         raft::RaftConfig raft_cfg;
-        raft_cfg.heartbeat_interval_ms = 150;   // configurable via config
-        raft_cfg.min_election_timeout_ms = 150;
-        raft_cfg.max_election_timeout_ms = 300;
-        raft_cfg.pre_vote = true;
+        raft_cfg.heartbeat_interval = std::chrono::milliseconds(150);
+        raft_cfg.min_election_timeout = std::chrono::milliseconds(150);
+        raft_cfg.max_election_timeout = std::chrono::milliseconds(300);
+        raft_cfg.enable_pre_vote = true;
         raft_cfg.max_entries_per_append = 1024;
         raft_cfg.max_append_bytes = 1048576;
         raft_cfg.rpc_queue_capacity = 16;
-        raft_cfg.snapshot_threshold = 10000;
+        raft_cfg.snapshot_threshold_entries = 10000;
 
         // Bootstrap: contact seeds or form a new cluster.
         auto bootstrap_result = bootstrap_from_seeds(

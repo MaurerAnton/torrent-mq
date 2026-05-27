@@ -63,6 +63,7 @@
 #include <vector>
 
 namespace torrent::client {
+using torrent::broker::BrokerServer;
 
 // ============================================================================
 // Forward Declarations

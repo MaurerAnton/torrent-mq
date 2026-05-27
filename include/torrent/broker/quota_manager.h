@@ -5,7 +5,8 @@
 namespace torrent::broker {
 class QuotaManager {
 public:
-    explicit QuotaManager(class BrokerServer& s) : server_(&s) {}
+    explicit QuotaManager(class BrokerServer& s);
+    ~QuotaManager();
     bool check_produce_quota(const std::string& client_id) noexcept;
     bool check_fetch_quota(const std::string& client_id) noexcept;
     bool check_request_quota(const std::string& client_id) noexcept;
@@ -14,4 +15,4 @@ public:
 private:
     BrokerServer* server_;
 };
-}
+} // namespace torrent::broker

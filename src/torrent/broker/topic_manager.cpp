@@ -33,7 +33,7 @@
 #include "torrent/broker/partition_manager.h"
 #include "torrent/broker/inter_broker.h"
 #include "torrent/broker/controller.h"
-#include "torrent/consensus/raft_node.h"
+#include "torrent/consensus/raft.h"
 #include "torrent/common/types.h"
 #include "torrent/storage/types.h"
 #include "torrent/storage/log_manager.h"

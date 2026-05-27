@@ -55,6 +55,7 @@
 #include <memory>
 #include <mutex>
 #include <optional>
+#include <queue>
 #include <sstream>
 #include <string>
 #include <string_view>

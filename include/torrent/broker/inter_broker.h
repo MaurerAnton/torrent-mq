@@ -7,6 +7,7 @@
 #include <optional>
 #include <chrono>
 #include <torrent/common/types.h>
+#include "torrent/consensus/raft_types.h"
 
 namespace torrent::raft {
     struct AppendEntriesRequest;
@@ -15,7 +16,6 @@ namespace torrent::raft {
     struct AppendEntriesResponse;
     struct RequestVoteResponse;
     struct InstallSnapshotResponse;
-    using RaftNodeId = int32_t;
 }
 
 namespace torrent::broker {

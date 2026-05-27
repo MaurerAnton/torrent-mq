@@ -456,7 +456,7 @@ Segment::Segment(SegmentConfig config)
 Segment::Segment(Segment&& other) noexcept
     : config_(std::move(other.config_))
     , header_(other.header_)
-    , state_(other.state_.load(std::memory_order_acquire))
+    , state_(other.state_)
     , next_offset_(other.next_offset_.load(std::memory_order_acquire))
     , file_size_(other.file_size_.load(std::memory_order_acquire))
     , max_timestamp_(other.max_timestamp_.load(std::memory_order_acquire))
@@ -497,7 +497,7 @@ Segment& Segment::operator=(Segment&& other) noexcept {
 
         config_          = std::move(other.config_);
         header_          = other.header_;
-        state_           = other.state_.load(std::memory_order_acquire);
+        state_           = other.state_;
         next_offset_.store(other.next_offset_.load(std::memory_order_acquire),
                            std::memory_order_release);
         file_size_.store(other.file_size_.load(std::memory_order_acquire),

@@ -223,18 +223,21 @@ public:
     result<void> close();
 
     [[nodiscard]] bool is_open() const noexcept {
-        return state_ == SegmentState::active || state_ == SegmentState::sealed;
+        auto s = state_.load(std::memory_order_acquire);
+        return s == SegmentState::active || s == SegmentState::sealed;
     }
 
     [[nodiscard]] bool is_active() const noexcept {
-        return state_ == SegmentState::active && !header_.is_sealed() && !config_.read_only;
+        auto s = state_.load(std::memory_order_acquire);
+        return s == SegmentState::active && !header_.is_sealed() && !config_.read_only;
     }
 
     [[nodiscard]] bool is_sealed() const noexcept {
-        return state_ == SegmentState::sealed || header_.is_sealed();
+        auto s = state_.load(std::memory_order_acquire);
+        return s == SegmentState::sealed || header_.is_sealed();
     }
 
-    [[nodiscard]] SegmentState state() const noexcept { return state_; }
+    [[nodiscard]] SegmentState state() const noexcept { return state_.load(std::memory_order_acquire); }
 
     // -- Write path --------------------------------------------------------
 
@@ -496,7 +499,7 @@ private:
 
     SegmentConfig                     config_;
     SegmentHeader                     header_;
-    SegmentState                      state_            = SegmentState::uninitialized;
+    std::atomic<SegmentState>         state_            = SegmentState::uninitialized;
     std::atomic<offset_t>             next_offset_      {kInvalidOffset};
     std::atomic<byte_count_t>         file_size_        {0};
     std::atomic<timestamp_ms_t>       max_timestamp_    {0};

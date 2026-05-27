@@ -117,6 +117,68 @@ constexpr int16_t kApiKeyTorrentClusterState            = 65;  ///< Full cluster
 constexpr int16_t kApiKeyTorrentSchemaGet               = 66;  ///< Retrieve a registered schema.
 constexpr int16_t kApiKeyTorrentSchemaSet               = 67;  ///< Register or update a schema.
 
+// Short aliases (used by tests and Kafka-compatible handlers)
+constexpr auto kProduce                        = kApiKeyProduce;
+constexpr auto kFetch                          = kApiKeyFetch;
+constexpr auto kListOffsets                    = kApiKeyListOffsets;
+constexpr auto kMetadata                       = kApiKeyMetadata;
+constexpr auto kLeaderAndIsr                   = kApiKeyLeaderAndIsr;
+constexpr auto kStopReplica                    = kApiKeyStopReplica;
+constexpr auto kUpdateMetadata                 = kApiKeyUpdateMetadata;
+constexpr auto kControlledShutdown             = kApiKeyControlledShutdown;
+constexpr auto kOffsetCommit                   = kApiKeyOffsetCommit;
+constexpr auto kOffsetFetch                    = kApiKeyOffsetFetch;
+constexpr auto kFindCoordinator                = kApiKeyFindCoordinator;
+constexpr auto kJoinGroup                      = kApiKeyJoinGroup;
+constexpr auto kHeartbeat                      = kApiKeyHeartbeat;
+constexpr auto kLeaveGroup                     = kApiKeyLeaveGroup;
+constexpr auto kSyncGroup                      = kApiKeySyncGroup;
+constexpr auto kDescribeGroups                 = kApiKeyDescribeGroups;
+constexpr auto kListGroups                     = kApiKeyListGroups;
+constexpr auto kSaslHandshake                  = kApiKeySaslHandshake;
+constexpr auto kApiVersions                    = kApiKeyApiVersions;
+constexpr auto kCreateTopics                   = kApiKeyCreateTopics;
+constexpr auto kDeleteTopics                   = kApiKeyDeleteTopics;
+constexpr auto kDeleteRecords                  = kApiKeyDeleteRecords;
+constexpr auto kInitProducerId                 = kApiKeyInitProducerId;
+constexpr auto kOffsetForLeaderEpoch           = kApiKeyOffsetForLeaderEpoch;
+constexpr auto kAddPartitionsToTxn             = kApiKeyAddPartitionsToTxn;
+constexpr auto kAddOffsetsToTxn                = kApiKeyAddOffsetsToTxn;
+constexpr auto kEndTxn                         = kApiKeyEndTxn;
+constexpr auto kWriteTxnMarkers                = kApiKeyWriteTxnMarkers;
+constexpr auto kTxnOffsetCommit                = kApiKeyTxnOffsetCommit;
+constexpr auto kDescribeAcls                   = kApiKeyDescribeAcls;
+constexpr auto kCreateAcls                     = kApiKeyCreateAcls;
+constexpr auto kDeleteAcls                     = kApiKeyDeleteAcls;
+constexpr auto kDescribeConfigs                = kApiKeyDescribeConfigs;
+constexpr auto kAlterConfigs                   = kApiKeyAlterConfigs;
+constexpr auto kAlterReplicaLogDirs            = kApiKeyAlterReplicaLogDirs;
+constexpr auto kDescribeLogDirs                = kApiKeyDescribeLogDirs;
+constexpr auto kSaslAuthenticate               = kApiKeySaslAuthenticate;
+constexpr auto kCreatePartitions               = kApiKeyCreatePartitions;
+constexpr auto kCreateDelegationToken          = kApiKeyCreateDelegationToken;
+constexpr auto kRenewDelegationToken           = kApiKeyRenewDelegationToken;
+constexpr auto kExpireDelegationToken          = kApiKeyExpireDelegationToken;
+constexpr auto kDescribeDelegationToken        = kApiKeyDescribeDelegationToken;
+constexpr auto kDeleteGroups                   = kApiKeyDeleteGroups;
+constexpr auto kElectLeaders                   = kApiKeyElectLeaders;
+constexpr auto kIncrementalAlterConfigs        = kApiKeyIncrementalAlterConfigs;
+constexpr auto kAlterPartitionReassignments    = kApiKeyAlterPartitionReassignments;
+constexpr auto kListPartitionReassignments     = kApiKeyListPartitionReassignments;
+constexpr auto kOffsetDelete                   = kApiKeyOffsetDelete;
+constexpr auto kDescribeClientQuotas           = kApiKeyDescribeClientQuotas;
+constexpr auto kAlterClientQuotas              = kApiKeyAlterClientQuotas;
+constexpr auto kDescribeUserScramCredentials   = kApiKeyDescribeUserScramCredentials;
+constexpr auto kAlterUserScramCredentials      = kApiKeyAlterUserScramCredentials;
+constexpr auto kTorrentFetch                   = kApiKeyTorrentFetch;
+constexpr auto kTorrentBatchProduce            = kApiKeyTorrentBatchProduce;
+constexpr auto kTorrentStreamSubscribe         = kApiKeyTorrentStreamSubscribe;
+constexpr auto kTorrentStreamUnsubscribe       = kApiKeyTorrentStreamUnsubscribe;
+constexpr auto kTorrentHealthCheck             = kApiKeyTorrentHealthCheck;
+constexpr auto kTorrentClusterState            = kApiKeyTorrentClusterState;
+constexpr auto kTorrentSchemaGet               = kApiKeyTorrentSchemaGet;
+constexpr auto kTorrentSchemaSet               = kApiKeyTorrentSchemaSet;
+
 /// Human-readable name for every API key. Returns "UNKNOWN" for unmapped keys.
 [[nodiscard]] inline const char* api_key_name(int16_t api_key) noexcept {
     switch (api_key) {
@@ -191,22 +253,22 @@ constexpr int16_t kApiKeyTorrentSchemaSet               = 67;  ///< Register or 
 /// Wire-protocol error codes.  Zero always means success.
 enum class ErrorCode : int16_t {
     /// No error — operation succeeded.
-    kNone                                   = 0,
+    kNone = 0, NONE = 0,
 
     /// Unexpected server / system error.
-    kUnknownServerError                     = -1,
+    kUnknownServerError = -1, UNKNOWN_SERVER_ERROR = -1,
 
     /// No leader exists for this partition.
-    kNotLeaderForPartition                  = 3,
+    kNotLeaderForPartition = 6, NOT_LEADER_FOR_PARTITION = 6,
 
     /// Message send size too large for the broker.
-    kMessageTooLarge                        = 10,
+    kMessageTooLarge = 10, MESSAGE_TOO_LARGE = 10,
 
     /// The requested offset is out of range.
-    kOffsetOutOfRange                       = 1,
+    kOffsetOutOfRange = 1, OFFSET_OUT_OF_RANGE = 1,
 
     /// Corrupt or unreadable message on disk.
-    kCorruptMessage                         = 2,
+    kCorruptMessage = 2, CORRUPT_MESSAGE = 2,
 
     /// Unknown topic or partition.
     kUnknownTopicOrPartition                = 3,
@@ -215,10 +277,10 @@ enum class ErrorCode : int16_t {
     kInvalidFetchSessionEpoch               = 5,
 
     /// Request requires a newer API version.
-    kUnsupportedVersion                     = 35,
+    kUnsupportedVersion = 35, UNSUPPORTED_VERSION = 35,
 
     /// The topic already exists.
-    kTopicAlreadyExists                     = 36,
+    kTopicAlreadyExists = 36, TOPIC_ALREADY_EXISTS = 36,
 
     /// Invalid number of partitions requested.
     kInvalidPartitions                      = 37,
@@ -233,7 +295,7 @@ enum class ErrorCode : int16_t {
     kInvalidConfig                          = 40,
 
     /// Not controller — this broker is not the cluster controller.
-    kNotController                          = 41,
+    kNotController = 41, NOT_CONTROLLER = 41,
 
     /// Invalid request data.
     kInvalidRequest                         = 42,
@@ -284,7 +346,7 @@ enum class ErrorCode : int16_t {
     kUnknownGroupId                         = 29,
 
     /// SASL authentication failed.
-    kSaslAuthenticationFailed               = 53,
+    kSaslAuthenticationFailed = 53, SASL_AUTHENTICATION_FAILED = 53,
 
     /// Transactional id not found.
     kConcurrentTransactions                 = 51,
@@ -293,7 +355,7 @@ enum class ErrorCode : int16_t {
     kInvalidProducerEpoch                   = 47,
 
     /// Producer fenced (another producer with same id started).
-    kProducerFenced                         = 61,
+    kProducerFenced = 61, PRODUCER_FENCED = 61,
 
     /// Invalid producer id mapping.
     kInvalidPidMapping                      = 49,

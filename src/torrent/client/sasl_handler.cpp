@@ -74,6 +74,7 @@
 namespace tp = torrent::protocol;
 
 namespace torrent::client {
+using torrent::broker::BrokerServer;
 
 // ============================================================================
 // Anonymous namespace — constants, helpers, SCRAM session state

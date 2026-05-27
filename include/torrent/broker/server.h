@@ -48,7 +48,6 @@ namespace torrent::network {
 }
 
 namespace torrent::raft {
-    struct RaftNodeId;
     struct RaftConfig;
 }
 
@@ -325,6 +324,9 @@ public:
 
     /// Block until STOPPED or timeout expires.  Returns true if stopped.
     [[nodiscard]] bool wait_for_shutdown(std::chrono::milliseconds timeout);
+
+    /// Read-only access to broker configuration.
+    [[nodiscard]] const BrokerConfig& config() const noexcept { return config_; }
 
 private:
     // ---- Configuration ----

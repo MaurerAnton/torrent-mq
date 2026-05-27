@@ -33,6 +33,9 @@
 #include <functional>
 #include <variant>
 #include <span>
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <cstring>
 
 namespace torrent {
 
@@ -363,6 +366,26 @@ struct result {
     }
 };
 
+template<>
+struct result<void> {
+    error_code error = error_code::none;
+    std::string error_message;
+
+    [[nodiscard]] bool ok() const noexcept { return error == error_code::none; }
+    [[nodiscard]] bool failed() const noexcept { return error != error_code::none; }
+
+    static result<void> success() {
+        return result<void>{};
+    }
+
+    static result<void> failure(error_code ec, std::string msg = {}) {
+        result<void> r;
+        r.error = ec;
+        r.error_message = std::move(msg);
+        return r;
+    }
+};
+
 // ============================================================================
 // Endpoint (host:port)
 // ============================================================================
@@ -390,6 +413,11 @@ struct endpoint {
 };
 
 } // namespace torrent
+
+// Forward declarations for types defined in other headers
+namespace torrent::broker { class MetadataCache; }
+namespace torrent::storage { class PartitionSnapshot; struct PartitionState; }
+namespace torrent::client { struct ProducerConfig; struct ConsumerConfig; }
 
 namespace std {
 template<>

@@ -4,6 +4,8 @@
 #include <vector>
 #include <torrent/common/types.h>
 
+namespace torrent::broker { class BrokerServer; }
+
 namespace torrent::admin {
 
 // Forward declaration of embedded HTTP server (defined in admin_server.cpp)

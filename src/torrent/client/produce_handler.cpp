@@ -87,6 +87,7 @@
 namespace tp = torrent::protocol;
 
 namespace torrent::client {
+using torrent::broker::BrokerServer;
 
 // ============================================================================
 // Anonymous namespace — internal helpers, parsing, CRC, serialization

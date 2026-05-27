@@ -199,6 +199,28 @@ static bool is_member(const std::vector<RaftNodeId>& members,
     return std::find(members.begin(), members.end(), id) != members.end();
 }
 
+static RaftConfig validate_raft_config(RaftConfig config, RaftNodeId node_id) {
+    if (config.heartbeat_interval <= std::chrono::milliseconds(0)) {
+        SPDLOG_WARN("raft: node {} heartbeat_interval {}ms is non-positive, "
+                    "clamping to 50ms",
+                    node_id, config.heartbeat_interval.count());
+        config.heartbeat_interval = std::chrono::milliseconds(50);
+    }
+    if (config.min_election_timeout <= std::chrono::milliseconds(0)) {
+        config.min_election_timeout = std::chrono::milliseconds(50);
+    }
+    if (config.max_election_timeout < config.min_election_timeout) {
+        config.max_election_timeout = config.min_election_timeout * 2;
+    }
+    if (config.max_append_bytes == 0) {
+        config.max_append_bytes = 4 * 1024 * 1024;
+    }
+    if (config.snapshot_chunk_size == 0) {
+        config.snapshot_chunk_size = 1024 * 1024;
+    }
+    return config;
+}
+
 // ============================================================================
 // Constructor
 // ============================================================================
@@ -211,7 +233,7 @@ RaftNode::RaftNode(RaftNodeId node_id,
                    RequestVoteSender rv_sender,
                    InstallSnapshotSender is_sender)
     : node_id_(node_id)
-    , config_(std::move(config))
+    , config_(validate_raft_config(std::move(config), node_id))
     , log_(std::move(log))
     , apply_fn_(std::move(apply_fn))
     , ae_sender_(std::move(ae_sender))
@@ -245,26 +267,6 @@ RaftNode::RaftNode(RaftNodeId node_id,
         throw std::invalid_argument(
             "RaftNode: is_sender must not be null (node_id="
             + std::to_string(node_id) + ")");
-    }
-
-    // --- Config validation ---
-    if (config_.heartbeat_interval <= 0ms) {
-        SPDLOG_WARN("raft: node {} heartbeat_interval {}ms is non-positive, "
-                    "clamping to 50ms",
-                    node_id_, config_.heartbeat_interval.count());
-        config_.heartbeat_interval = 50ms;
-    }
-    if (config_.min_election_timeout <= 0ms) {
-        config_.min_election_timeout = 50ms;
-    }
-    if (config_.max_election_timeout < config_.min_election_timeout) {
-        config_.max_election_timeout = config_.min_election_timeout * 2;
-    }
-    if (config_.max_append_bytes == 0) {
-        config_.max_append_bytes = 4 * 1024 * 1024;
-    }
-    if (config_.snapshot_chunk_size == 0) {
-        config_.snapshot_chunk_size = 1024 * 1024;
     }
 
     // --- Ensure directories exist ---

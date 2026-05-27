@@ -11,7 +11,22 @@ class ConsumerGroupManager; class RequestDispatcher; class InterBroker;
 class Controller; class QuotaManager; class RetentionManager;
 class CompactionManager; class TransactionCoordinator; class LeaderBalancer;
 
-struct TopicConfig { std::string name; int32_t partitions=1; int32_t replication_factor=3; };
+struct TopicConfig {
+    std::string name;
+    int32_t num_partitions = 1;
+    int32_t partitions = 1;
+    int32_t replication_factor = 3;
+    int64_t retention_ms = 604800000;      // 7 days
+    int64_t segment_bytes = 1073741824;    // 1 GB
+    int64_t retention_bytes = -1;          // -1 = no size limit
+    int64_t max_message_bytes = 1048576;   // 1 MB
+    bool has_size_retention = false;
+    bool is_internal = false;
+    int32_t min_insync_replicas = 1;
+    bool cleanup_policy_compact = false;
+    bool cleanup_policy_delete = true;
+    std::string policy = "delete";
+};
 struct TopicMetadata { std::string name; topic_id_t id{}; std::vector<partition_id_t> partitions; error_code error{error_code::none}; };
 
 class TopicManager {
@@ -29,16 +44,4 @@ private:
     BrokerServer* server_;
 };
 
-class PartitionManager {
-public:
-    explicit PartitionManager(class BrokerServer& server);
-    ~PartitionManager();
-    result<partition_id_t> create_partition(const std::string& topic, partition_id_t partition);
-    result<void> delete_partition(const std::string& topic, partition_id_t partition);
-    bool is_leader(const std::string& topic, partition_id_t partition) const;
-    broker_id_t leader_for(const std::string& topic, partition_id_t partition) const;
-    std::vector<broker_id_t> replicas_for(const std::string& topic, partition_id_t partition) const;
-private:
-    BrokerServer* server_;
-};
 } // namespace torrent::broker

@@ -511,6 +511,7 @@ private:
     mutable std::shared_mutex mutex_;
     std::thread election_thread_;
     std::thread heartbeat_thread_;
+    std::unordered_map<RaftNodeId, int> heartbeat_failures_;
     std::condition_variable cv_;
     std::atomic<bool> running_{false};
     std::atomic<bool> transferring_{false};          ///< Suppresses proposals during handoff.

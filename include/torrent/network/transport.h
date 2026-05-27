@@ -17,22 +17,13 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 
-// ---------------------------------------------------------------------------
+#include "torrent/common/types.h"
 // OpenSSL forward declarations (no headers required for the API surface)
 // ---------------------------------------------------------------------------
 
 struct ssl_ctx_st;     // SSL_CTX
 struct ssl_st;         // SSL
 struct ssl_session_st; // SSL_SESSION
-
-namespace torrent {
-
-// Re-declared from common/types.h for header self-sufficiency.
-struct endpoint;
-struct buffer_view;
-class shared_buffer;
-
-} // namespace torrent
 
 namespace torrent::network {
 

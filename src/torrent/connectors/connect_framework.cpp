@@ -40,6 +40,7 @@
 #include "torrent/common/types.h"
 
 #include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 #include <nlohmann/json.hpp>
 

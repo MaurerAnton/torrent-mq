@@ -10,6 +10,7 @@
 #include "torrent/common/pidfile.h"
 
 #include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 #include <cerrno>
 #include <cstring>

@@ -7,7 +7,8 @@
 namespace torrent::broker {
 class ConsumerGroupManager {
 public:
-    explicit ConsumerGroupManager(class BrokerServer& s) : server_(&s) {}
+    explicit ConsumerGroupManager(class BrokerServer& s);
+    ~ConsumerGroupManager();
     result<void> join_group(const std::string& group_id, const std::string& member_id, const std::string& protocol);
     result<void> leave_group(const std::string& group_id, const std::string& member_id);
     result<void> sync_group(const std::string& group_id, const std::string& member_id);
@@ -17,4 +18,4 @@ public:
 private:
     BrokerServer* server_;
 };
-}
+} // namespace torrent::broker

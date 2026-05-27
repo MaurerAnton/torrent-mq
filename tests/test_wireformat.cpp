@@ -7,11 +7,13 @@
 #include "torrent/client/admin_handler.h"
 #include "torrent/common/types.h"
 #include "torrent/common/endian.h"
+#include "torrent/network/message_codec.h"
 #include <gtest/gtest.h>
 #include <cstring>
 #include <vector>
 
 namespace torrent::test {
+using torrent::network::MessageCodec;
 namespace {
 
 using namespace torrent::protocol;

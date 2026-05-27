@@ -24,6 +24,7 @@
 #include "torrent/common/signal_handler.h"
 
 #include <spdlog/spdlog.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
 
 #include <atomic>
 #include <cerrno>

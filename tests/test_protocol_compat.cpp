@@ -7,6 +7,7 @@
 #include <vector>
 
 namespace torrent::test {
+using torrent::network::MessageCodec;
 namespace {
 
 using namespace torrent::protocol;
@@ -413,7 +414,7 @@ TEST(ProtocolCompatTest, FetchRequestDefault) {
 TEST(ProtocolCompatTest, MetadataRequestDefault) {
     MetadataRequest req;
     EXPECT_TRUE(req.topics.empty());
-    EXPECT_FALSE(req.allow_auto_topic_creation);
+    EXPECT_FALSE(req.allow_auto_create);
 }
 
 TEST(ProtocolCompatTest, JoinGroupRequestDefault) {

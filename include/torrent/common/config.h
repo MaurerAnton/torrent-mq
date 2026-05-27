@@ -10,6 +10,8 @@
 #include <fstream>
 #include <nlohmann/json.hpp>
 
+#include "torrent/common/types.h"
+
 namespace torrent {
 
 /**

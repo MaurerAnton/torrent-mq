@@ -37,6 +37,7 @@
 #include <deque>
 #include <filesystem>
 #include <functional>
+#include <future>
 #include <map>
 #include <memory>
 #include <mutex>
